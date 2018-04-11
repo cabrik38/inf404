@@ -25,6 +25,6 @@ public enum Nature_Lexeme{
 }
 
 public class Lexeme{
-  Nature_Lexeme nature;
-  int valeur; //pour le jump
+  private Nature_Lexeme nature;
+  private int valeur; //pour le jump
 }
