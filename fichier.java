@@ -1,10 +1,11 @@
 import java.io.*;
+import java.util.*;
 
 public class Fichier{
   private  int carCour;  	// caractere courant
   private  unsigned int ligneCour, colonneCour;  // numeros de ligne et colonne
   private  File file;		// le fichier d'entree
-  private List<String> liste;
+  private ArrayList<String> liste;
   private boolean theEnd;
   public Fichier(){} // le constructeur qui permet d'initialiser une instance de ma classe /!\ a faire a chaque fois !
 
@@ -16,7 +17,7 @@ public class Fichier{
     try {
            // FileReader reads text files in the default encoding.
            FileReader fileReader =
-               new FileReader(fileName);
+               new FileReader(nom_fichier);
 
            // Always wrap FileReader in BufferedReader.
            BufferedReader bufferedReader =
@@ -60,31 +61,31 @@ public class Fichier{
   }
 
 
-  char caractere_courant() {
+  public char caractere_courant() {
     return CarCour;
   }
 
   /* --------------------------------------------------------------------- */
 
-  boolean fin_de_sequence()  {
+  public boolean fin_de_sequence()  {
     return theEnd;
   }
 
   /* --------------------------------------------------------------------- */
 
-  unsigned int numero_ligne() {
+  public unsigned int numero_ligne() {
     return LigneCour;
   }
 
   /* --------------------------------------------------------------------- */
 
-  unsigned int numero_colonne() {
+  public unsigned int numero_colonne() {
     return ColonneCour ;
   }
 
   /* --------------------------------------------------------------------- */
 
-  void arreter() {
+  public void arreter() {
     file.close() ;
   }
 

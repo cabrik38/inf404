@@ -21,7 +21,8 @@ public enum Nature_Lexeme{
   PULL,
   PUSH,
   JUMP,
-  ENTIER;
+  ENTIER,
+  ERREUR;
 }
 
 public class Lexeme{
