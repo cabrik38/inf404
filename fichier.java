@@ -62,7 +62,7 @@ public class Fichier{
 
 
   public char caractere_courant() {
-    return CarCour;
+    return Character.toLowerCase(CarCour);
   }
 
   /* --------------------------------------------------------------------- */
