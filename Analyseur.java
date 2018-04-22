@@ -36,9 +36,9 @@ public class Analyseur {
 
 		while (est_separateur(_fichier.caractere_courant())) {
 			_fichier.avancer();
-    }
+		}
 
-    while (etat != E_FIN) {
+		while (etat != E_FIN) {
 			switch (etat) {
 				case E_INIT:
 					if (_fichier.fin_de_sequence()) {
@@ -60,12 +60,10 @@ public class Analyseur {
 								_lexeme_en_cours.valeur = _fichier.caractere_courant() - '0';
 								etat = E_ENTIER;
 								break;
-							case 'A':
 							case 'a':
 								_lexeme_en_cours.nature = A;
 								etat = E_FIN;
 								break;
-							case 'B':
 							case 'b':
 								_lexeme_en_cours.nature = B;
 								etat = E_FIN;
@@ -130,46 +128,189 @@ public class Analyseur {
 								etat = E_5J;
 								break;
 							default:
-
+								_lexeme_en_cours.nature = ERREUR;
+								etat = E_FIN;
 						}
 						_fichier.avancer();
 					}
 					break;
 				case E_ENTIER:
+					if (_fichier.caractere_courant() < '0' || _fichier.caractere_courant() > '9') {
+						etat = E_FIN;
+					} else {
+						_lexeme_en_cours.valeur = _lexeme_en_cours.valeur * 10 + _fichier.caractere_courant() - '0';
+						_fichier.avancer();
+					}
 					break;
 				case E_EGAL:
+					if (_fichier.caractere_courant() == '=') {
+						_lexeme_en_cours.nature = EGAL;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = AFFECT;
+						etat = E_FIN;
+					}
 					break;
 				case E_EXCL:
+					if (_fichier.caractere_courant() == '=') {
+						_lexeme_en_cours.nature = DIFF;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_INF:
+					if (_fichier.caractere_courant() == '=') {
+						_lexeme_en_cours.nature = INFE;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = INF;
+						etat = E_FIN;
+					}
 					break;
 				case E_SUP:
+					if (_fichier.caractere_courant() == '=') {
+						_lexeme_en_cours.nature = SUPE;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = SUP;
+						etat = E_FIN;
+					}
 					break;
 				case E_1I:
+					if (_fichier.caractere_courant() == 'f') {
+						_lexeme_en_cours.nature = IF;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else if (_fichier.caractere_courant() == 'n') {
+						_lexeme_en_cours.nature = IN;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_2E:
+					if (_fichier.caractere_courant() == 'l') {
+						etat = E_2L;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_2L:
+					if (_fichier.caractere_courant() == 's') {
+						etat = E_2S;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_2S:
+					if (_fichier.caractere_courant() == 'e') {
+						_lexeme_en_cours.nature = ELSE;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_3O:
+					if (_fichier.caractere_courant() == 'u') {
+						etat = E_3U;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_3U:
+					if (_fichier.caractere_courant() == 't') {
+						_lexeme_en_cours.nature = OUT;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_4P:
+					if (_fichier.caractere_courant() == 'u') {
+						etat = E_4U;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_4U:
+					if (_fichier.caractere_courant() == 'l') {
+						etat = E_4L;
+						_fichier.avancer();
+					} else if (_fichier.caractere_courant() == 's') {
+						etat = E_4S;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_4L:
+					if (_fichier.caractere_courant() == 'l') {
+						_lexeme_en_cours.nature = PULL;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_4S:
+					if (_fichier.caractere_courant() == 'h') {
+						_lexeme_en_cours.nature = PUSH;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_5J:
+					if (_fichier.caractere_courant() == 'u') {
+						etat = E_5U;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_5U:
+					if (_fichier.caractere_courant() == 'm') {
+						etat = E_5M;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 				case E_5M:
+					if (_fichier.caractere_courant() == 'p') {
+						_lexeme_en_cours.nature = JUMP;
+						etat = E_FIN;
+						_fichier.avancer();
+					} else {
+						_lexeme_en_cours.nature = ERREUR;
+						etat = E_FIN;
+					}
 					break;
 			}
 		}
