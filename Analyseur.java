@@ -13,7 +13,10 @@ public class Analyseur {
         _fichier.demarrer(nom_fichier);
         _lexeme_en_cours = new Lexeme();
         avancer();
+        rec_script();
     }
+    
+    /** ANALYSE LEXICALE **/
 
     public void avancer() {
         reconnaitre_lexeme();
@@ -319,4 +322,210 @@ public class Analyseur {
     private boolean est_separateur(char c) {
         return c == ' ' || c == '\t' || c == '\n';
     }
+    
+    /** ANALYSE SYNTAXIQUE **/
+    
+    private void rec_script(){
+		if (rec_instruction()){
+			rec_script();
+		}
+	}
+	
+	private boolean rec_instruction(){
+		if (lexeme_courant().nature == IF){
+			avancer();
+			if (lexeme_courant().nature != PARO){
+				erreur_syntaxique();
+			}
+			avancer();
+			rec_condition();
+			if (lexeme_courant().nature != PARF){
+				erreur_syntaxique();
+			}
+			avancer();
+			if (lexeme_courant().nature != ACCO){
+				erreur_syntaxique();
+			}
+			avancer();
+			rec_script();
+			if (lexeme_courant().nature != ACCF){
+				erreur_syntaxique();
+			}
+			avancer();
+			rec_suite_if();
+		} else if (!rec_affectation()){
+			rec_fonction();
+		}
+	}
+	
+	private void rec_suite_if(){
+		if (lexeme_courant().nature == ELSE){
+			avancer();
+			if (lexeme_courant().nature != ACCO){
+				erreur_syntaxique();
+			}
+			avancer();
+			rec_script();
+			if (lexeme_courant().nature != ACCF){
+				erreur_syntaxique();
+			}
+			avancer();
+		}
+	}
+	
+	private void rec_condition(){
+		rec_operation();
+		rec_symbole();
+		rec_operation();
+	}
+	
+	private boolean rec_affectation(){
+		if (!rec_variable()){
+			return false;
+		}
+		if (lexeme_courant().nature != AFFECT){
+			return false;
+		}
+		avancer();
+		rec_operation();
+		return true;
+	}
+	
+	private void rec_fonction(){
+		switch (lexeme_courant()){
+			case IN:
+				if (lexeme_courant().nature != PARO){
+					erreur_syntaxique();
+				}
+				avancer();
+				rec_variable();
+				if (lexeme_courant().nature != PARF){
+					erreur_syntaxique();
+				}
+				avancer();
+				break;
+			case OUT:
+				if (lexeme_courant().nature != PARO){
+					erreur_syntaxique();
+				}
+				avancer();
+				rec_operation();
+				if (lexeme_courant().nature != PARF){
+					erreur_syntaxique();
+				}
+				avancer();
+				break;
+			case PULL:
+				if (lexeme_courant().nature != PARO){
+					erreur_syntaxique();
+				}
+				avancer();
+				rec_variable();
+				if (lexeme_courant().nature != PARF){
+					erreur_syntaxique();
+				}
+				avancer();
+				break;
+			case PUSH:
+				if (lexeme_courant().nature != PARO){
+					erreur_syntaxique();
+				}
+				avancer();
+				rec_operation();
+				if (lexeme_courant().nature != PARF){
+					erreur_syntaxique();
+				}
+				avancer();
+				break;
+			case JUMP:
+				if (lexeme_courant().nature != PARO){
+					erreur_syntaxique();
+				}
+				avancer();
+				rec_nombre();
+				if (lexeme_courant().nature != PARF){
+					erreur_syntaxique();
+				}
+				avancer();
+				break;
+			default:
+				erreur_syntaxique();
+		}
+	}
+	
+	private void rec_operation(){
+		if (!rec_variable()){
+			erreur_syntaxique();
+		} else {
+			rec_suite_operation();
+		}
+	}
+	
+	private void rec_suite_operation(){
+		if (rec_operateur()){
+			if (!rec_variable()){
+				erreur_syntaxique();
+			}
+		}
+	}
+	
+	private void rec_symbole(){
+		switch (lexeme_courant()){
+			case EGAL:
+				break;
+			case DIFF:
+				break;
+			case INF:
+				break;
+			case INFE:
+				break;
+			case SUP:
+				break;
+			case SUPE:
+				break;
+			default:
+				erreur_syntaxique();
+		}
+		avancer();
+	}
+	
+	private boolean rec_variable(){
+		if (lexeme_courant().nature == A){
+			avancer();
+			return true;
+		} else if (lexeme_courant().nature == B){
+			avancer();
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	private void rec_nombre(){
+		if (lexeme_courant() == MOINS){
+			avancer();
+		}
+		if (lexeme_courant() == ENTIER){
+			avancer();
+		} else {
+			erreur_syntaxique();
+		}
+	}
+	
+	private boolean rec_operateur(){
+		switch (lexeme_courant()){
+			case PLUS:
+				break;
+			case MOINS:
+				break;
+			case MUL:
+				break;
+			case DIV:
+				break;
+			default:
+				return false;
+		}
+		avancer();
+		return true;
+	}
 }
