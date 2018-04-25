@@ -528,5 +528,9 @@ public class Analyseur {
 		avancer();
 		return true;
 	}
+	
+	private void erreur_syntaxique(){
+		System.out.println("Erreur de syntaxe\n");
+	}
 }
 
