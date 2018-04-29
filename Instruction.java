@@ -5,5 +5,7 @@ public class Instruction {
     
     public Instruction(){}
     
-    public executer(Donnees &d){}
+    public int executer(Donnees &d){
+        
+    }
 }
