@@ -409,7 +409,7 @@ public class Analyseur {
 					erreur_syntaxique();
 				}
 				avancer();
-				rec_operation();
+				rec_variable();
 				if (lexeme_courant().nature != PARF){
 					erreur_syntaxique();
 				}
@@ -431,7 +431,7 @@ public class Analyseur {
 					erreur_syntaxique();
 				}
 				avancer();
-				rec_operation();
+				rec_variable();
 				if (lexeme_courant().nature != PARF){
 					erreur_syntaxique();
 				}
@@ -454,18 +454,19 @@ public class Analyseur {
 	}
 	
 	private void rec_operation(){
-		if (!rec_variable()){
-			erreur_syntaxique();
-		} else {
-			rec_suite_operation();
-		}
+		rec_facteur();
+		rec_suite_operation();
 	}
 	
 	private void rec_suite_operation(){
 		if (rec_operateur()){
-			if (!rec_variable()){
-				erreur_syntaxique();
-			}
+			rec_facteur();
+		}
+	}
+	
+	private void rec_facteur(){
+		if (!rec_variable()){
+			rec_nombre();
 		}
 	}
 	
