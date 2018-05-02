@@ -16,7 +16,7 @@ public class SequenceInstructions {
         if (_pointeur >= _sequence.size()){
             return _pointeur - _sequence.size() + 1;
         } else if (_pointeur < 0){
-            return _sequence.size() + _pointeur;
+            return _pointeur;
         }
         return 0;
     }
