@@ -18,4 +18,6 @@ public class SequenceInstructions {
         }
         return 0;
     }
+    
+    public void setPointeur(int pointeur){ _pointeur = pointeur; }
 }
