@@ -7,10 +7,10 @@ public class InstructionIF extends Instruction {
     private Condition _condition;
     private int _pointeur;
     
-    public InstructionIF(Condition _c){
+    public InstructionIF(Condition cond){
         _sequenceIF = new ArrayList<Instruction>();
         _sequenceELSE = new ArrayList<Instruction>();
-        _condition = _c;
+        _condition = cond;
         _pointeur = 0;
     }
     
