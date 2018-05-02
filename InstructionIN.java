@@ -8,7 +8,7 @@ public class InstructionIN extends Instruction {
     }
     
     public int executer(Donnees &d){
-        if (paramA){
+        if (_paramA){
             d.setA(d.pullIn());
         } else {
             d.setB(d.pullIn());
