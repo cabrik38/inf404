@@ -22,9 +22,9 @@ public class SequenceInstructions {
     }
     
     public void setPointeur(int pointeur){ 
-        if (pointeur >= 0){
+        if (pointeur > 0){
             _pointeur = (pointeur - 1) % _sequence.size(); 
-        } else {
+        } else if (pointeur < 0){
             _pointeur = (_sequence.size() + pointeur) % _sequence.size();
         }
     }
