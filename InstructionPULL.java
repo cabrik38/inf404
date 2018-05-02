@@ -8,7 +8,7 @@ public class InstructionPULL extends Instruction {
     }
     
     public int executer(Donnees &d){
-        if (paramA){
+        if (_paramA){
             d.setA(d.pullSave());
         } else {
             d.setB(d.pullSave());
