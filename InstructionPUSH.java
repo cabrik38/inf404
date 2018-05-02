@@ -8,7 +8,7 @@ public class InstructionPUSH extends Instruction {
     }
     
     public int executer(Donnees &d){
-        if (paramA){
+        if (_paramA){
             d.pushSave(d.getA());
         } else {
             d.pushSave(d.getB());
