@@ -21,5 +21,11 @@ public class SequenceInstructions {
         return 0;
     }
     
-    public void setPointeur(int pointeur){ _pointeur = pointeur; }
+    public void setPointeur(int pointeur){ 
+        if (pointeur >= 0){
+            _pointeur = pointeur; 
+        } else {
+            _pointeur = _sequence.size() + pointeur;
+        }
+    }
 }
