@@ -3,7 +3,7 @@ package Classe;
 public class InstructionJUMP extends Instruction {
     private int _param;
     
-    public InstructionIN(int param){
+    public InstructionJUMP(int param){
         _param = param;
     }
     
