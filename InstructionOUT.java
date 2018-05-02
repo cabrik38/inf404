@@ -8,7 +8,7 @@ public class InstructionOUT extends Instruction {
     }
     
     public int executer(Donnees &d){
-        if (paramA){
+        if (_paramA){
             d.pushOut(d.getA());
         } else {
             d.pushOut(d.getB());
