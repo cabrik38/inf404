@@ -16,7 +16,7 @@ public class InstructionIF extends Instruction {
     
     public int executer(Donnees &d){
         if (_pointeur == 0){
-            _condition.update();
+            _condition.update(d);
             _sequenceIF.setPointeur(1);
             _sequenceELSE.setPointeur(1);
             _pointeur = 1;
