@@ -4,16 +4,18 @@ public class Analyseur {
     private Fichier _fichier;
     private Lexeme _lexeme_en_cours;
 
-    public Analyseur(String nom_fichier) {
-        demarrer(nom_fichier);
+    public Analyseur(String nom_fichier, Script &s) {
+        demarrer(nom_fichier, s);
     }
 
-    public void demarrer(String nom_fichier) {
+    public void demarrer(String nom_fichier, Script &s) {
         _fichier = new Fichier();
         _fichier.demarrer(nom_fichier);
         _lexeme_en_cours = new Lexeme();
         avancer();
-        rec_script();
+		SequenceInstructions seq = new SequenceInstructions();
+        rec_script(seq);
+		s = new Script(seq);
     }
     
     /** ANALYSE LEXICALE **/
