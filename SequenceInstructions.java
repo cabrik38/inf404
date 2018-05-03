@@ -21,6 +21,10 @@ public class SequenceInstructions {
         return 0;
     }
     
+    public void addInstruction(Instruction I){
+        _sequence.add(I);
+    }
+    
     public void setPointeur(int pointeur){ 
         if (pointeur > 0){
             _pointeur = (pointeur - 1) % _sequence.size(); 
