@@ -325,20 +325,21 @@ public class Analyseur {
     
     /** ANALYSE SYNTAXIQUE **/
     
-    private void rec_script(){
-		if (rec_instruction()){
-			rec_script();
+    private void rec_script(SequenceInstructions &seq){
+		if (rec_instruction(seq)){
+			rec_script(seq);
 		}
 	}
 	
-	private boolean rec_instruction(){
+	private boolean rec_instruction(SequenceInstructions &seq){
 		if (lexeme_courant().nature == IF){
 			avancer();
 			if (lexeme_courant().nature != PARO){
 				erreur_syntaxique();
 			}
 			avancer();
-			rec_condition();
+			Condition cond;
+			rec_condition(cond);
 			if (lexeme_courant().nature != PARF){
 				erreur_syntaxique();
 			}
@@ -347,25 +348,29 @@ public class Analyseur {
 				erreur_syntaxique();
 			}
 			avancer();
-			rec_script();
+			SequenceInstructions seqIF = new SequenceInstructions();
+			rec_script(seqIF);
 			if (lexeme_courant().nature != ACCF){
 				erreur_syntaxique();
 			}
 			avancer();
-			rec_suite_if();
-		} else if (!rec_affectation()){
-			rec_fonction();
+			SequenceInstructions seqELSE = new SequenceInstructions();
+			rec_suite_if(seqELSE);
+			InstructionIF i = new InstructionIF(cond, seqIF, seqELSE);
+			seq.addInstruction(i);
+		} else if (!rec_affectation(seq)){
+			rec_fonction(seq);
 		}
 	}
 	
-	private void rec_suite_if(){
+	private void rec_suite_if(SequenceInstructions &seqELSE){
 		if (lexeme_courant().nature == ELSE){
 			avancer();
 			if (lexeme_courant().nature != ACCO){
 				erreur_syntaxique();
 			}
 			avancer();
-			rec_script();
+			rec_script(seqELSE);
 			if (lexeme_courant().nature != ACCF){
 				erreur_syntaxique();
 			}
@@ -373,25 +378,33 @@ public class Analyseur {
 		}
 	}
 	
-	private void rec_condition(){
-		rec_operation();
-		rec_symbole();
-		rec_operation();
+	private void rec_condition(Condition &cond){
+		Operation op1;
+		rec_operation(op1);
+		Nature_Lexeme sym;
+		rec_symbole(sym);
+		Operation op2;
+		rec_operation(op2);
+		cond = new Condition(op1, sym, op2);
 	}
 	
-	private boolean rec_affectation(){
-		if (!rec_variable()){
+	private boolean rec_affectation(SequenceInstructions &seq){
+		boolean paramA = true;
+		if (!rec_variable(paramA)){
 			return false;
 		}
 		if (lexeme_courant().nature != AFFECT){
 			return false;
 		}
 		avancer();
-		rec_operation();
+		Operation op;
+		rec_operation(op);
+		InstructionAFFECT i = new InstructionAFFECT(paramA, op);
+		seq.addInstruction(i);
 		return true;
 	}
 	
-	private void rec_fonction(){
+	private void rec_fonction(SequenceInstructions &seq){
 		switch (lexeme_courant()){
 			case IN:
 				if (lexeme_courant().nature != PARO){
@@ -453,36 +466,47 @@ public class Analyseur {
 		}
 	}
 	
-	private void rec_operation(){
-		rec_facteur();
-		rec_suite_operation();
+	private void rec_operation(Operation &op){
+		Nature_Lexeme fact1, sym, fact2;
+		int val1, val2;
+		rec_facteur(fact1, val1);
+		rec_suite_operation(sym, fact2, val2);
+		op = new Operation(fact1, val1, sym, fact2, val2);
 	}
 	
-	private void rec_suite_operation(){
-		if (rec_operateur()){
-			rec_facteur();
+	private void rec_suite_operation(Nature_Lexeme &sym, Nature_Lexeme &fact, int &val){
+		if (rec_operateur(sym)){
+			rec_facteur(fact, val);
+		} else {
+			sym = Nature_Lexeme.PLUS;
+			fact = Nature_Lexeme.ENTIER;
+			val = 0;
 		}
 	}
 	
-	private void rec_facteur(){
-		if (!rec_variable()){
-			rec_nombre();
+	private void rec_facteur(Nature_Lexeme &fact, int &val){
+		boolean paramA = true;
+		if (rec_variable(paramA)){
+			if (paramA){
+				fact = Nature_Lexeme.A;
+			} else {
+				fact = Nature_Lexeme.B;
+			}
+		} else {
+			fact = Nature_Lexeme.ENTIER;
+			rec_nombre(val);
 		}
 	}
 	
-	private void rec_symbole(){
-		switch (lexeme_courant()){
+	private void rec_symbole(Nature_Lexeme &sym){
+		switch (lexeme_courant().nature){
 			case EGAL:
-				break;
 			case DIFF:
-				break;
 			case INF:
-				break;
 			case INFE:
-				break;
 			case SUP:
-				break;
 			case SUPE:
+				sym = lexeme_courant().nature;
 				break;
 			default:
 				erreur_syntaxique();
@@ -490,38 +514,44 @@ public class Analyseur {
 		avancer();
 	}
 	
-	private boolean rec_variable(){
+	private boolean rec_variable(boolean &paramA){
 		if (lexeme_courant().nature == A){
 			avancer();
+			paramA = true;
 			return true;
 		} else if (lexeme_courant().nature == B){
 			avancer();
+			paramA = false;
 			return true;
 		} else {
 			return false;
 		}
 	}
 	
-	private void rec_nombre(){
-		if (lexeme_courant() == MOINS){
+	private void rec_nombre(int &val){
+		if (lexeme_courant().nature == MOINS){
 			avancer();
-		}
-		if (lexeme_courant() == ENTIER){
+			if (lexeme_courant().nature == ENTIER){
+				val = -lexeme_courant().valeur;
+				avancer();
+			} else {
+				erreur_syntaxique();
+			}
+		} else if (lexeme_courant().nature == ENTIER){
+			val = lexeme_courant().valeur;
 			avancer();
 		} else {
 			erreur_syntaxique();
 		}
 	}
 	
-	private boolean rec_operateur(){
-		switch (lexeme_courant()){
+	private boolean rec_operateur(Nature_Lexeme &op){
+		switch (lexeme_courant().nature){
 			case PLUS:
-				break;
 			case MOINS:
-				break;
 			case MUL:
-				break;
 			case DIV:
+				op = lexeme_courant().nature;
 				break;
 			default:
 				return false;
