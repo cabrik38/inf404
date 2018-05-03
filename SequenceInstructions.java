@@ -11,6 +11,9 @@ public class SequenceInstructions {
     }
     
     public int step(Donnees &d){
+        if (_sequence.isEmpty()){
+            return 1;
+        }
         int i = _sequence.get(_pointeur).executer(d);
         _pointeur = _pointeur + i;
         if (_pointeur >= _sequence.size()){
